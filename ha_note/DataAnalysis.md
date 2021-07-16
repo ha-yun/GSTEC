@@ -326,7 +326,7 @@ DROP VIEW myView3;
 <hr>
 
 ## <2>
-###SQL 함수  
+### SQL 함수  
 SQL은 1부터 센다 (ex : python은 0부터
 ```sqlite
 --문자열 함수

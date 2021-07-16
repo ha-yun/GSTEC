@@ -402,3 +402,207 @@ for _ in range(n):
   my_stack, stack_size = run_cmd_with_stack(my_stack,stack_size,command)
 ```
 
+# 4주차
+## <1> : 휴강
+## <2>
+```python
+# append, len, remove 없이 풀이 해설
+class Stack:
+    def __init__(self, n):
+        self.stack = [None for _ in range(n)]
+        self.stack_size = 0
+
+    def push(self, num):
+        self.stack[self.stack_size] = int(num)
+        self.stack_size += 1
+
+    def pop(self):
+      last_val = self.top()
+      if last_val > 0:
+        self.stack_size -=1
+      return last_val
+
+    def size(self):
+        return self.stack_size
+
+    def empty(self):
+        if self.stack_size > 0:
+            return 0
+        return 1
+
+    def top(self):
+        if self.stack_size > 0:
+            return self.stack[self.stack_size-1]
+        
+        return -1
+
+```
+```python
+def run_cmd_with_stack(my_stack, cmd):
+    cmd_type = cmd[0]
+    if cmd_type == "push":
+        _, num = cmd    # num = cmd[1]
+        my_stack.push(num)
+    elif cmd_type == "pop":
+        print(my_stack.pop())
+    elif cmd_type == "size":
+        print(my_stack.size())
+    elif cmd_type == "empty":
+        print(my_stack.empty())
+    elif cmd_type == "top":
+        print(my_stack.top())
+    return my_stack
+
+n = int(input())
+my_stack = Stack(n)
+
+for _ in range(n):
+    # "push 2".split() => ["push", "2"]
+    # "size".split() => ["size"]
+    command = input().split()
+    my_stack = run_cmd_with_stack(my_stack, command)
+# print(stack)
+```
+### 큐  
+FIFO(First In First Out) 
+Q. 큐문제 : 정수를 저장하는 큐를 구현한 다음, 입력으로 주어지는 명령을 처리하는 프로그램을 작성하시오.
+* push X : 정수 X를 큐에 넣는 연산이다.  
+* pop : 큐에서 가장 앞에 있는 정수를 빼고, 그 수를 출력한다. 만약 큐에 들어있는 정수가 없는 경우엔 -1을 출력
+* size : 큐에 들어있는 정수의 개수를 출력한다.
+* empty : 큐가 비어있으면 1, 아니면 0을 출력한다.
+* front : 큐의 가장 앞에 있는 정수를 출력한다. 만약 큐에 들어있는 정수가 없는 경우엔 -1을 출력
+* back : 큐의 가장 뒤에 있는 정수를 출력한다. 만약 큐에 들어있는 정수가 없는 경우엔 -1을 출력
+  - 첫째 줄에 주어지는 명령의 수 N(1<=N<=10,000)이 주어진다. 둘째 줄부터 N개의 줄에는 명령이 하나씩 주어진다. 주어지는 정수는 1보다 크거나 같고, 100,000보다 작거나 같다. 문제에 나와있지 않은 명령이 주어지는 경우는 없다.  
+  - 출력해야하는 명령이 주어질 때마다, 한줄에 하나씩 출력
+```python
+# 1
+class Queue():
+  def __init__(self):
+    self.queue = []
+    self.queue_size = 0
+
+  def push(self, x):
+    self.queue.append(x)
+    self.queue_size += 1
+    
+  def pop(self):
+    if self.queue_size==0:
+      return -1
+    else:
+      self.queue_size -= 1
+      return self.queue.pop(0)
+
+  def size(self):
+    return self.queue_size
+
+  def empty(self):
+    if self.queue_size == 0 :
+      return 1
+    else:
+      return 0
+
+  def front(self):
+    if self.queue_size == 0 :
+      return -1
+    else:
+      return self.queue[0]
+  
+  def back(self):
+    if self.queue_size == 0:
+      return -1
+    else:
+      return self.queue[-1]
+
+
+def run_cmd_with_queue(my_queue, cmd):
+    cmd_type = cmd[0]
+    if cmd_type == "push":
+        _, num = cmd 
+        my_queue.push(num)
+    elif cmd_type == "pop":
+        print(my_queue.pop())
+    elif cmd_type == "size":
+        print(my_queue.size())
+    elif cmd_type == "empty":
+        print(my_queue.empty())
+    elif cmd_type == "front":
+        print(my_queue.front())
+    elif cmd_type == "back":
+        print(my_queue.back())
+    return my_queue
+
+N = int(input())
+my_queue = Queue()
+
+
+for _ in range(N):
+    command = input().split()
+    my_stack = run_cmd_with_queue(my_queue, command)
+```
+```python
+# 2
+class Queue():
+  def __init__(self, n):
+    self.queue = [None for _ in range(n)]
+    self.queue_size = 0
+    self.queue_front = 0
+
+  def push(self, x):
+    self.queue[self.queue_size] = x
+    self.queue_size += 1
+
+  def pop(self):
+    word = self.front()
+    if word == -1:
+      return -1
+    else:
+      self.queue_front += 1
+      return word
+
+  def size(self):
+    return self.queue_size - self.queue_front
+
+  def empty(self):
+    if self.size() == 0 :
+      return 1
+    else:
+      return 0
+
+  def front(self):
+    if self.size() == 0 :
+      return -1
+    else:
+      return self.queue[self.queue_front]
+  
+  def back(self):
+    if self.size() == 0:
+      return -1
+    else:
+      return self.queue[self.queue_size-1]
+
+
+def run_cmd_with_queue(my_queue, cmd):
+    cmd_type = cmd[0]
+    if cmd_type == "push":
+        _, num = cmd 
+        my_queue.push(num)
+    elif cmd_type == "pop":
+        print(my_queue.pop())
+    elif cmd_type == "size":
+        print(my_queue.size())
+    elif cmd_type == "empty":
+        print(my_queue.empty())
+    elif cmd_type == "front":
+        print(my_queue.front())
+    elif cmd_type == "back":
+        print(my_queue.back())
+    return my_queue
+
+N = int(input())
+my_queue = Queue(N)
+
+for _ in range(N):
+    command = input().split()
+    my_stack = run_cmd_with_queue(my_queue, command)
+```
+
