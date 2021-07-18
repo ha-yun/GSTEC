@@ -387,3 +387,415 @@ def hello_world(request):
 
 # 4주차
 ## <1>
+#### POST 통신을 이용한 DB 데이터 저장
+ accountapp/templates/accountapp/hello_world.html  
+ ```html
+  <h1 style="font-family: 'Yomogi', cursive"
+class="m-5">hello world list</h1>
+
+    <form action="/accounts/hello_world/"method="post">
+        {% csrf_token %}
+        <div class="input-group mb-3 w-50 m-auto">
+            <input type="text" class="form-control"
+                name="hello_world_input">
+            <button class="btn btn-dark" type="submit">
+                Button
+            </button>
+        </div>
+
+ {% if hello_world_list %}
+        {% for hello_world in hello_world_list %}
+            <h3>{{ hello_world.text }}</h3>
+        {% endfor %}
+```
+accountapp/views.py 
+```python
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import render
+
+# Create your views here.
+from django.urls import reverse
+
+from accountapp.models import HelloWorld
+
+
+def hello_world(request):
+        new_hello_world.text = temp
+        new_hello_world.save()
+
+
+        return HttpResponseRedirect(reverse('accountapp:hello_world'))
+
+    else:
+        hello_world_list = HelloWorld.objects.all()
+        return render(request, 'accountapp/hello_world.html', context={'hello_world_list': hello_world_list})
+
+```
+#### Create View
+accountapp/views.py
+```python
+
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import render
+
+# Create your views here.
+from django.urls import reverse
+from django.urls import reverse, reverse_lazy
+from django.views.generic import CreateView
+
+from accountapp.models import HelloWorld
+
+@@ -23,3 +26,9 @@ def hello_world(request):
+        hello_world_list = HelloWorld.objects.all()
+        return render(request, 'accountapp/hello_world.html', context={'hello_world_list': hello_world_list})
+
+
+class AccountCreateView(CreateView):
+    model = User
+    form_class = UserCreationForm
+    success_url = reverse_lazy('accountapp:hello_world')
+    template_name = 'accountapp/create.html'
+
+```
+
+## <2>
+accountapp/urls.py
+```python
+from django.urls import path
+
+from accountapp.views import hello_world
+from accountapp.views import hello_world, AccountCreateView
+
+app_name ='accountapp'
+
+urlpatterns = [
+    path('hello_world/', hello_world, name="hello_world"),
+
+    path('create/', AccountCreateView.as_view(), name='create')
+]
+```
+accountapp/views.py
+```python
+    model = User
+    form_class = UserCreationForm
+    success_url = reverse_lazy('accountapp:hello_world')
+    template_name = 'accountapp/create.html'
+```
+accountapp/templates/accountapp/create.html
+```html
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <div class="text-center">
+        <div>
+            <h4 class="m-5">Sign Up</h4>
+        </div>
+        <div>
+            <form action="{% url 'accountapp:create' %}" method="post">
+                {% csrf_token %}
+                {{ form }}
+                <div class="m-5">
+                    <input type="submit" class="btn btn-dark rounded-pill px-5">
+                </div>
+            </form>
+        </div>
+    </div>
+
+{% endblock %}
+```
+accountapp/templates/accountapp/login.html
+```html
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <div class="text-center">
+        <div>
+            <h4 class="m-5">Login</h4>
+        </div>
+        <div>
+            <form action="{% url 'accountapp:loogin' %}" method="post">
+                {% csrf_token %}
+                {{ form }}
+                <div class="m-5">
+                    <input type="submit" class="btn btn-dark rounded-pill px-5">
+                </div>
+            </form>
+        </div>
+    </div>
+
+{% endblock %} 
+
+```
+accountapp/urls.py
+```python
+from django.contrib.auth.views import LoginView, LogoutView
+from django.urls import path
+
+from accountapp.views import hello_world, AccountCreateView
+
+urlpatterns = [
+    path('hello_world/', hello_world, name="hello_world"),
+
+    path('login/', LoginView.as_view(template_name='accountapp/login.html'), name='loogin'),
+
+    path('logout/', LogoutView.as_view(), name='logout'),
+
+    path('create/', AccountCreateView.as_view(), name='create')
+]
+```
+gsweb/settings.py
+```python
+
+from pathlib import Path
+
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
+from django.urls import reverse_lazy
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+local_env=open(os.path.join(BASE_DIR, '.env')) #base_dir가 프로젝트 경로를 의미,
+
+# https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+LOGIN_REDIRECT_URL = reverse_lazy('accountapp:hello_world')
+
+LOGOUT_REDIRECT_URL = reverse_lazy('accountapp:login')
+```
+templates/header.html
+```html
+    <div class="pragmatic_header_button">
+        <span>nav1</span>
+        <span>nav2</span>
+
+        <span>
+            <a href="{% url 'accountapp:loogin' %}">
+                Login
+            </a>
+        </span>
+        <span>
+            <a href="{% url 'accountapp:create' %}">
+                Signup
+            </a>
+        </span>
+    </div>
+
+</div>
+```
+## <3>
+#### Bootstrap
+accountapp/templates/accountapp/create.html
+```html
+{% extends 'base.html' %}
+{% load bootstrap4 %}
+
+
+{% block content %}
+
+    <div class="text-center mw-500 m-auto">
+        <div>
+            <h4 class="m-5">Sign Up</h4>
+        </div>
+        <div>
+            <form action="{% url 'accountapp:create' %}" method="post">
+                {% csrf_token %}
+                {% bootstrap_form form %}
+                <div class="m-5">
+                    <input type="submit" class="btn btn-dark rounded-pill px-5">
+                </div>
+```
+accountapp/templates/accountapp/login.html
+```html
+{% block content %}
+
+    <div class="text-center mw-500 m-auto">
+        <div>
+            <h4 class="m-5">Login</h4>
+        </div>
+        <div>
+            <form action="{% url 'accountapp:login' %}" method="post">
+                {% csrf_token %}
+                {% bootstrap_form form %}
+                <div class="m-5">
+                    <input type="submit" class="btn btn-dark rounded-pill px-5">
+                </div>
+```
+accountapp/urls.py
+```python
+urlpatterns = [
+    path('hello_world/', hello_world, name="hello_world"),
+
+    path('login/', LoginView.as_view(template_name='accountapp/login.html'), name='login'),
+
+    path('logout/', LogoutView.as_view(), name='logout'),
+```
+static/base.css
+```css
+.mw-500{
+    max-width: 500px;
+    padding: 1rem 1.5rem;
+} 
+```
+templates/header.html
+```html
+    <div class="pragmatic_header_button">
+        <span>nav1</span>
+        <span>nav2</span>
+        {% if not user.is_authenticated  %}
+        <span>
+            <a href="{% url 'accountapp:loogin' %}">
+            <a href="{% url 'accountapp:login' %}">
+                Login
+            </a>
+        </span>
+<h1>Pragmatic</h1>
+                Signup
+            </a>
+        </span>
+        {% else %}
+        <span>
+            <a href="{% url 'accountapp:logout' %}">
+                Logout
+            </a>
+        </span>
+        {% endif %}
+    </div>
+
+</div>
+```
+accountapp/templates/accountapp/login.html
+```html
+{% load bootstrap4 %}
+```
+templates/base.html
+```html
+<body style="font-family: 'NanumSquareR'">
+```
+templates/head.html
+```html
+{#    static link#}
+    <link rel="stylesheet" type="text/css" href="{% static "base.css" %}">
+
+        <style>
+        @font-face {
+            font-family: 'NanumSquareR';
+            src: local('NanumSquareR'),
+            url("{% static 'fonts/NanumSquareR.ttf' %}") format("opentype");
+        }
+        @font-face {
+            font-family: 'NanumSquareEB';
+            src: local('NanumSquareEB'),
+            url("{% static 'fonts/NanumSquareEB.otf' %}") format("opentype");
+        }
+        @font-face {
+            font-family: 'NanumSquareB';
+            src: local('NanumSquareB'),
+            url("{% static 'fonts/NanumSquareB.otf' %}") format("opentype");
+        }
+        @font-face {
+            font-family: 'NanumSquareR';
+            src: local('NanumSquareR'),
+            url("{% static 'fonts/NanumSquareR.otf' %}") format("opentype");
+        }
+    </style>
+
+</head> 
+```
+#### Detailview
+accountapp/urls.py
+```python
+from django.contrib.auth.views import LoginView, LogoutView
+from django.urls import path
+
+from accountapp.views import hello_world, AccountCreateView, AccountDetailView
+
+app_name ='accountapp'
+
+    path('logout/', LogoutView.as_view(), name='logout'),
+
+    path('create/', AccountCreateView.as_view(), name='create'),
+
+    path('detail/<int:pk>', AccountDetailView.as_view(), name='detail')
+]
+
+```
+accountapp/views.py
+```python
+
+# Create your views here.
+from django.urls import reverse, reverse_lazy
+from django.views.generic import CreateView
+from django.views.generic import CreateView, DetailView
+
+from accountapp.models import HelloWorld
+
+class AccountCreateView(CreateView):
+    success_url = reverse_lazy('accountapp:hello_world')
+    template_name = 'accountapp/create.html'
+
+class AccountDetailView(DetailView):
+    model = User
+    context_object_name = 'target_user'
+    template_name = 'accountapp/detail.html'
+```
+templates/header.html
+```html
+        {% else %}
+        <span>
+            <a href="{% url 'accountapp:detail' pk=user.pk %}">
+                Mypage
+            </a>
+        </span>
+        <span>
+            <a href="{% url 'accountapp:logout' %}">
+                Logout
+```
+accountapp/templates/accountapp/detail.html
+```html
+{% extends 'base.html' %}
+{% block content %}
+
+    <div class="text-center mw-500 m-auto">
+        <div>
+            <h4 class="m-5">{{ target_user.username }}</h4>
+        </div>
+        <div>
+            {{ target_user.date_joined }}
+        </div>
+    </div>
+
+{% endblock %}
+```
+templates/head.html
+```html
+{#    static link#}
+    <link rel="stylesheet" type="text/css" href="{% static "base.css" %}">
+
+        <style>
+    <style>
+        @font-face {
+            font-family: 'NanumSquareR';
+            src: local('NanumSquareR'),
+            url("{% static 'fonts/NanumSquareR.ttf' %}") format("opentype");
+            url("{% static 'fonts/NanumSquareR.otf' %}") format("opentype");
+        }
+        @font-face {
+            font-family: 'NanumSquareEB';
+            url("{% static 'fonts/NanumSquareB.otf' %}") format("opentype");
+        }
+        @font-face {
+            font-family: 'NanumSquareR';
+            src: local('NanumSquareR'),
+            url("{% static 'fonts/NanumSquareR.otf' %}") format("opentype");
+            font-family: 'NanumSquareL';
+            src: local('NanumSquareL'),
+            url("{% static 'fonts/NanumSquareL.otf' %}") format("opentype");
+        }
+    </style>
+
+```
