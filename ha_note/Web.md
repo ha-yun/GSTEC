@@ -192,3 +192,198 @@ gsweb/templates폴더에 footer, head, header.html을 만들어준다.
 
 # 3주차
 ## <1>
+#### Static 설정 및 CSS 파일 분리
+static은 자주 변경되지 않는 파일들을 말함. 앱별로 따로 관리하게 될것.  
+1. 최상위 폴더에 static폴더 생성
+2. static폴더안에 base.css생성
+3. header와 footer를 꾸며준다면  
+```html
+< div class="pragmatic_header_logo" >
+```
+4. base.css에 header와 footer의 꾸밀 class를 적어준다.
+```html
+   .pragmatic_header_logo{
+    margin : 2rem 0;
+    font-family: 'Yomogi', cursive;
+}
+```
+5. head.html에 base.css를 불러온다.  
+(내부 소스이므로 템플릿 언어로 {% load static % }이용  
+   <  hr >은 줄을 그어준다.
+   
+```html
+{% load static %}  
+< link rel="stylesheet" type="text/css" href="{% static "base.css" %}" >
+```
+6. django는 static을 사용하지 않는다고 전제하므로 static의 경로를 만들어줘야 한다.  
+settings.py에
+```html
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
+```
+#### bootstrap
+* front-end library로 css를 일일이 만지지 않아도, class만 지정하면 디자인을 사용할 수 있다. , 다양한 디자인 요소들!  
+외부 소스이므로 불러와야한다. -> 외부 소스를 가져오는 위치는 head.html  
+```html
+{# BOOTSTRAP LINK #}  
+    < link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" >  
+```
+
+### 폰트 불러오기
+* 외부에서 폰트를 불러온다면 (google font)
+```html
+ {# HEADER FONT #}  
+    < link rel="preconnect" href="https://fonts.googleapis.com" >  
+    < link rel="preconnect" href="https://fonts.gstatic.com" crossorigin >  
+    < link href="https://fonts.googleapis.com/css2?family=Yomogi&display=swap" rel="stylesheet" >  
+-> 사용할 폰트를 긁어오고, font-family를 입력해줘야 한다.
+.pragmatic_footer_logo{  margin : 2rem 0; font-family: 'Yomogi', cursive;}
+```
+
+## <2>
+#### CSS  
+* DISPLAY Attribute : block,inline,inline-block, None  
+* Visibility : hidden,   
+* size : px, em, rem, %      -->font size에 따라 변한다.?
+* rem -> 값이 유연하게 변하는  
+### css(html에 css꾸미기)   
+1. inline  
+2. internal style sheet < style  >
+3. external style sheet href 외부스타일시트를 이용한..  
+```html
+#templates파일의 accountapp파일의 hello_world.html에 size test
+  <style>
+
+    .testing{
+        background-color: blue;
+        height: 48px;
+        width: 48px;
+        margin: 1rem;
+        border-radius: .5rem;
+    }
+    </style>
+# internal style sheet
+    <div class="testing" div style="display : inline-block">block</div>
+    <div class="testing" div style="display : inline-block; width: 3rem; height: 3rem">block</div>
+    <div class="testing" div style="display : inline-block; width: 3em; height: 3em">block</div>
+    <div class="testing" div style="display : inline-block; width: 30%; height: 30%">block</div>
+
+#rem, em, %, px test해보기
+
+```
+```python
+#추가로 아주 간단한 모델. .? 만들기
+#모델의 활성화
+#accountapp package안에 models.py에 들어간다.
+from django.db import models
+
+# Create your models here.
+
+
+class HelloWorld(models.Model):
+    text = models.CharField(max_length=255, null=False)
+
+#아주 간단한 모델
+#terminal에 
+python manage.py makemigrations 0001_iniatial
+python manage.py migrate
+#를 해주면
+#migration package안에 0001_iniatial.py가 생성된다.
+
+#당신을 위해 migration들을 실행시켜주고, 자동으로 데이터베이스 스키마를 관리해주는 migrate 명령어가 있습니다
+```
+migrate 명령은 아직 적용되지 않은 마이그레이션을 모두 수집해 이를 실행하며(Django는 django_migrations 테이블을 두어 마이그레이션 적용 여부를 추적합니다) 이 과정을 통해 모델에서의 변경 사항들과 데이터베이스의 스키마의 동기화가 이루어집니다.
+
+마이그레이션은 매우 기능이 강력하여, 마치 프로젝트를 개발할 때처럼 데이터베이스나 테이블에 손대지 않고도 모델의 반복적인 변경을 가능하게 해줍니다. 동작 중인 데이터베이스를 자료 손실 없이 업그레이드 하는 데 최적화 되어 있습니다. 튜토리얼의 나머지 부분에서 이 부분을 조금 더 살펴보겠습니다만, 지금은 모델의 변경을 만드는 세 단계의 지침을 기억하세요.
+
+## <3>
+> migration  
+> makemigrations : 모델 변경을 감지하고 변경사항을 반영할 파일 생성  
+manage.py -> migrate ->database
+
+>HTTP Protocol  : GET, POST   
+* GET  
+주소창?key=value(쿼리데이터)  
+주소창에 추가적인 데이터를 넣는 방식  
+주소창에 넣는데 한계가 있다.  
+* POST  
+post + body  
+http body 안에다가 추가적인 데이터를 넣는다.  
+
+
+
+return render(request, 'accountapp/hello_world.html', context={'text':'POST METHOD!'})  
+context는 문맥.
+
+    < h3>{{  }}</h3 > : 단순 변수 출력 쌍괄호
+```python
+#view.py
+def hello_world(request):
+    if request.method == "POST":
+        return render(request, 'accountapp/hello_world.html', context={'text':'POST METHOD!'})
+    else:
+        return render(request, 'accountapp/hello_world.html', context={'text':'GET METHOD!'})
+```
+```html
+#templates/accountapp/hello_world.html
+<div style="margin: 2rem; text-align: center">
+  <h1>METHOD</h1>
+
+  <h3>{{ text }}</h3>
+
+    <div style="margin: 2rem; text-align: center">
+    <h1>METHOD</h1>
+    <form action="/accounts/hello_world/"method="post">       #action에 요청할 post html주소 입력
+        {% csrf_token %}                                      #장고에서 post를 요청할 때는 반드시 넣어주어야 정상적으로 작동
+
+        <input class="btn btn-primary rounded-pill px-2 py-2" type="submit">     #px : x축 padding늘려주고, py : y축 padding늘려줌 5까지 지원
+                                                                                 #bootstrap의 button에서 class를 가져온다, rounded-pill은 버튼을 round한 모양으로 바꿔줌
+    </form>
+
+
+<input type="text" name="hello_world_input">
+#views.py에 
+    if request.method == "POST":
+
+        temp = request.POST.get('hello_world_input')
+
+
+        return render(request, 'accountapp/hello_world.html', context={'text':temp})
+```
+```html
+###데이터베이스 모델을 하나 생성한후 text에 입력한 데이터가 모델에 저장되게 한 후
+# 출력하게 하는 방법
+
+#hello_world.html
+    <input type="text" name="hello_world_input">를 추가해준다.
+```
+```python
+#views.py
+from accountapp.models import HelloWorld
+def hello_world(request):
+    if request.method == "POST":
+
+        temp = request.POST.get('hello_world_input')
+
+        new_hello_world = HelloWorld()        #models.py에 만들었던 모델
+        new_hello_world.text = temp
+        new_hello_world.save()
+
+        return render(request, 'accountapp/hello_world.html', context={'hello_world_output':new_hello_world})
+    else:
+        return render(request, 'accountapp/hello_world.html', context={'text':'GET METHOD!'})
+```
+```html
+#hello_world.html
+    {% if hello_world_output %}     
+    <h3>{{ hello_world_output.text }}</h3>
+    {% endif %}
+
+#if, endif를 사용하여 hello_world_output값이 있으면 출력해준다.
+
+#database에 들어가서 sqlite driver를 다운로드 하면 데이터베이스를 볼 수 있다.
+```
+
+# 4주차
+## <1>
