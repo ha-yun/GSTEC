@@ -87,7 +87,8 @@ urlpatterns = [
        패턴들은 GET 이나 POST 의 매개 변수들, 혹은 도메인 이름을 검색하지 않습니다. 예를 들어, https://www.example.com/myapp/ 이 요청된 경우, URLconf 는 오직 myapp/ 부분만 바라 봅니다. https://www.example.com/myapp/?page=3, 같은 요청에도, URLconf 는 역시 myapp/ 부분만 신경씁니다.
     2. path() 인수: view, Django 에서 일치하는 패턴을 찾으면, HttpRequest 객체를 첫번째 인수로 하고, 경로로 부터 〈캡처된〉 값을 키워드 인수로하여 특정한 view 함수를 호출합니다.
     
-    
+<hr>
+
 ## <2>
 #### 깃에 올릴 때 SECRET KEY를 가려주기
 1. 프로젝트 파일에 .env 텍스트 파일을 만들어주고 SECTRET_KEY를 넣어준다.
@@ -122,6 +123,7 @@ SECRET_KEY =env_list['SECRET_KEY']
 #.gitignore에 .env를 적어준다.
 .env
 ```
+<hr>
 
 ## <3>
 #### 장고 Template의 extends, include 구문과 render 함수
@@ -190,6 +192,8 @@ gsweb/templates폴더에 footer, head, header.html을 만들어준다.
 </div>
 ```
 
+<hr>
+
 # 3주차
 ## <1>
 #### Static 설정 및 CSS 파일 분리
@@ -241,6 +245,8 @@ STATICFILES_DIRS = [
 .pragmatic_footer_logo{  margin : 2rem 0; font-family: 'Yomogi', cursive;}
 ```
 
+<hr>
+
 ## <2>
 #### CSS  
 * DISPLAY Attribute : block,inline,inline-block, None  
@@ -252,7 +258,7 @@ STATICFILES_DIRS = [
 2. internal style sheet < style  >
 3. external style sheet href 외부스타일시트를 이용한..  
 ```html
-#templates파일의 accountapp파일의 hello_world.html에 size test
+<!--templates파일의 accountapp파일의 hello_world.html에 size test-->
   <style>
 
     .testing{
@@ -263,15 +269,16 @@ STATICFILES_DIRS = [
         border-radius: .5rem;
     }
     </style>
-# internal style sheet
+<!-- internal style sheet-->
     <div class="testing" div style="display : inline-block">block</div>
     <div class="testing" div style="display : inline-block; width: 3rem; height: 3rem">block</div>
     <div class="testing" div style="display : inline-block; width: 3em; height: 3em">block</div>
     <div class="testing" div style="display : inline-block; width: 30%; height: 30%">block</div>
 
-#rem, em, %, px test해보기
+<!--rem, em, %, px test해보기-->
 
 ```
+### DataBase model
 ```python
 #추가로 아주 간단한 모델. .? 만들기
 #모델의 활성화
@@ -279,7 +286,6 @@ STATICFILES_DIRS = [
 from django.db import models
 
 # Create your models here.
-
 
 class HelloWorld(models.Model):
     text = models.CharField(max_length=255, null=False)
@@ -293,9 +299,12 @@ python manage.py migrate
 
 #당신을 위해 migration들을 실행시켜주고, 자동으로 데이터베이스 스키마를 관리해주는 migrate 명령어가 있습니다
 ```
-migrate 명령은 아직 적용되지 않은 마이그레이션을 모두 수집해 이를 실행하며(Django는 django_migrations 테이블을 두어 마이그레이션 적용 여부를 추적합니다) 이 과정을 통해 모델에서의 변경 사항들과 데이터베이스의 스키마의 동기화가 이루어집니다.
+migrate 명령은 아직 적용되지 않은 마이그레이션을 모두 수집해 이를 실행하며(Django는 django_migrations 테이블을 두어 마이그레이션 적용 여부를 추적합니다)  
+이 과정을 통해 모델에서의 변경 사항들과 데이터베이스의 스키마의 동기화가 이루어집니다.
+마이그레이션은 매우 기능이 강력하여, 마치 프로젝트를 개발할 때처럼 데이터베이스나 테이블에 손대지 않고도 모델의 반복적인 변경을 가능하게 해줍니다.  
+동작 중인 데이터베이스를 자료 손실 없이 업그레이드 하는 데 최적화 되어 있습니다. 튜토리얼의 나머지 부분에서 이 부분을 조금 더 살펴보겠습니다만, 지금은 모델의 변경을 만드는 세 단계의 지침을 기억하세요.
 
-마이그레이션은 매우 기능이 강력하여, 마치 프로젝트를 개발할 때처럼 데이터베이스나 테이블에 손대지 않고도 모델의 반복적인 변경을 가능하게 해줍니다. 동작 중인 데이터베이스를 자료 손실 없이 업그레이드 하는 데 최적화 되어 있습니다. 튜토리얼의 나머지 부분에서 이 부분을 조금 더 살펴보겠습니다만, 지금은 모델의 변경을 만드는 세 단계의 지침을 기억하세요.
+<hr>
 
 ## <3>
 > migration  
@@ -310,13 +319,11 @@ manage.py -> migrate ->database
 * POST  
 post + body  
 http body 안에다가 추가적인 데이터를 넣는다.  
-
-
-
+  
 return render(request, 'accountapp/hello_world.html', context={'text':'POST METHOD!'})  
 context는 문맥.
 
-    < h3>{{  }}</h3 > : 단순 변수 출력 쌍괄호
+< h3  > {{     }} <  /h3 > : 단순 변수 출력 쌍괄호
 ```python
 #view.py
 def hello_world(request):
@@ -334,30 +341,29 @@ def hello_world(request):
 
     <div style="margin: 2rem; text-align: center">
     <h1>METHOD</h1>
-    <form action="/accounts/hello_world/"method="post">       #action에 요청할 post html주소 입력
-        {% csrf_token %}                                      #장고에서 post를 요청할 때는 반드시 넣어주어야 정상적으로 작동
+    <form action="/accounts/hello_world/"method="post">       <!--action에 요청할 post html주소 입력-->
+        {% csrf_token %}                                      <!--장고에서 post를 요청할 때는 반드시 넣어주어야 정상적으로 작동-->
 
-        <input class="btn btn-primary rounded-pill px-2 py-2" type="submit">     #px : x축 padding늘려주고, py : y축 padding늘려줌 5까지 지원
-                                                                                 #bootstrap의 button에서 class를 가져온다, rounded-pill은 버튼을 round한 모양으로 바꿔줌
+        <input class="btn btn-primary rounded-pill px-2 py-2" type="submit">     <!--px : x축 padding늘려주고, py : y축 padding늘려줌 5까지 지원-->
+                                                                                 <!--bootstrap의 button에서 class를 가져온다, rounded-pill은 버튼을 round한 모양으로 바꿔줌-->
     </form>
 
 
 <input type="text" name="hello_world_input">
+```
+```python
 #views.py에 
     if request.method == "POST":
 
         temp = request.POST.get('hello_world_input')
 
-
         return render(request, 'accountapp/hello_world.html', context={'text':temp})
 ```
-```html
-###데이터베이스 모델을 하나 생성한후 text에 입력한 데이터가 모델에 저장되게 한 후
-# 출력하게 하는 방법
 
-#hello_world.html
-    <input type="text" name="hello_world_input">를 추가해준다.
-```
+데이터베이스 모델을 하나 생성한후 text에 입력한 데이터가 모델에 저장되게 한 후 출력하게 하는 방법
+#### hello_world.html
+<  input type="text" name="hello_world_input"  >를 추가해준다.
+
 ```python
 #views.py
 from accountapp.models import HelloWorld
@@ -374,16 +380,17 @@ def hello_world(request):
     else:
         return render(request, 'accountapp/hello_world.html', context={'text':'GET METHOD!'})
 ```
-```html
-#hello_world.html
-    {% if hello_world_output %}     
-    <h3>{{ hello_world_output.text }}</h3>
-    {% endif %}
 
-#if, endif를 사용하여 hello_world_output값이 있으면 출력해준다.
+#### hello_world.html
+{% if hello_world_output %}     
+<h3>{{ hello_world_output.text }}</h3>
+{% endif %}
 
-#database에 들어가서 sqlite driver를 다운로드 하면 데이터베이스를 볼 수 있다.
-```
+#### if, endif를 사용하여 hello_world_output값이 있으면 출력해준다.
+
+#### database에 들어가서 sqlite driver를 다운로드 하면 데이터베이스를 볼 수 있다.
+
+<hr>
 
 # 4주차
 ## <1>
