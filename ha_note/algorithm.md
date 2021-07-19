@@ -402,6 +402,8 @@ for _ in range(n):
   my_stack, stack_size = run_cmd_with_stack(my_stack,stack_size,command)
 ```
 
+<hr>
+
 # 4주차
 ## <1> : 휴강
 ## <2>
@@ -605,4 +607,6 @@ for _ in range(N):
     command = input().split()
     my_stack = run_cmd_with_queue(my_queue, command)
 ```
+
+<hr>
 

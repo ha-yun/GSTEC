@@ -454,7 +454,7 @@ from django.views.generic import CreateView
 
 from accountapp.models import HelloWorld
 
-@@ -23,3 +26,9 @@ def hello_world(request):
+def hello_world(request):
         hello_world_list = HelloWorld.objects.all()
         return render(request, 'accountapp/hello_world.html', context={'hello_world_list': hello_world_list})
 
@@ -466,6 +466,8 @@ class AccountCreateView(CreateView):
     template_name = 'accountapp/create.html'
 
 ```
+
+<hr>
 
 ## <2>
 accountapp/urls.py
@@ -594,6 +596,9 @@ templates/header.html
 
 </div>
 ```
+
+<hr>
+
 ## <3>
 #### Bootstrap
 accountapp/templates/accountapp/create.html
