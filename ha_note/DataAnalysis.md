@@ -635,4 +635,92 @@ P( 𝐴 ∪ 𝐵 )= 𝑃 (𝐴) + 𝑃(𝐵) − 𝑃(𝐴 ∩ 𝐵)
 
 ## <3>
 ####  신용 카드 사용 기록 EDA. 분석
+* 자세한건 ex_credit_eda_colab.ipynb
+#### 1. 데이터를 불러와서 살펴 본다.
+```python
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import warnings
+warnings.filterwarnings('ignore')
+%matplotlib inline
 
+df = pd.read_csv("../data/data_credit.csv")
+df.shape
+df.head(5)
+```
+#### 2. 데이터를 정제하고 결측치 처리를 한다.
+```python
+# 결측치가 분명히 있는 것 같으니 컬럼별 집계해 본다.
+df.isnull().sum(axis=0)
+
+# 일시불이 NA로 처리 되었으니 결측치를 1로 채운다.
+df = df.fillna(value=1)
+df.head(3)
+
+# 결측치를 다시 집계해 본다.
+df.isnull().sum(axis=0)
+
+# Installments의 자료형을 정수로 바꾼다.
+df["installments"] = df.installments.astype("int32")
+
+# month 파생 변수를 만든다.
+df["month"] = df.date.apply( lambda x : x[5:7] )
+
+# hour 파생 변수를 만든다.
+df["hour"] = df.time.apply(lambda x : x[:2])
+
+# date와 time은 더 이상 사용하지 않겠으니 제거한다.
+df.drop(columns=['date','time'], inplace=True)
+df.head(3)
+```
+#### 3. 개개 변수별로 탐색한다.
+```python
+# store_id별 도수를 집계하고 히스토그램으로 출력해 본다.
+df.store_id.value_counts().plot.hist(bins=50, color="turquoise",alpha=0.5)
+plt.show()
+# 큰 skew를 보이므로 log 변환해서 다시 시각화 해본다.
+np.log(df.store_id.value_counts()).plot.hist(bins=50, color="turquoise",alpha=0.5)
+plt.show()
+# 중위수를 계산해 본다.
+freq1 = df.store_id.value_counts() 
+print(np.median(freq1))
+# Top store_id를 본다.
+freq1.sort_values(ascending = False)[:10]
+```
+#### 4. 수치형 변수 1개 + 명목형 변수 1개를 조합한 탐색.
+```python
+# store_id 별 결제 금액.
+# 평균 금액 랭킹 top 10.
+df.groupby("store_id").amount.mean().sort_values(ascending=False)[:10]
+# Pivot table 방식으로 다시 해본다.
+pd.pivot_table(df, index = "store_id", values="amount", aggfunc = np.mean).sort_values(by="amount", ascending=False)[:10]
+# 총 금액 랭킹 top 10.
+df.groupby("store_id").amount.sum().sort_values(ascending=False)[:10]
+# Pivot table 방식으로 다시 해본다.
+pd.pivot_table(df, index = "store_id", values="amount", aggfunc = np.sum).sort_values(by="amount", ascending=False)[:10]
+```
+#### 5. 수치형 변수 1개 + 명목형 변수 2개를 조합한 탐색.
+```python
+# 월별 시간대별 매출 추이.
+# 평균.
+df2 = pd.pivot_table(df, index="hour", columns="month", values = "amount", aggfunc=np.mean)
+df2
+# 시각화.
+df2.plot()
+plt.show()
+```
+#### 6. 등급화.
+```python
+# store_id별 total 결제 금액에 의한 3 등급 분류. HINT: pd.qcut() 사용.
+ser = df.groupby("store_id").amount.sum()
+ser2 = pd.qcut(ser,3,labels=['Low', 'Medium', 'High'])                      # qcut() 함수 사용!
+combo = pd.DataFrame({"Store ID":ser.index, "Amount":ser.values, "Category":ser2.values})
+combo.head(10)
+# 등급별 평균.
+combo.groupby("Category")["Amount"].mean()
+```
+
+
+<hr>

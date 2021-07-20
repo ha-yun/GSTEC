@@ -279,6 +279,8 @@ STATICFILES_DIRS = [
 
 ```
 ### DataBase model
+기본적으로는 SQLite을 사용하도록 구성되어 있습니다. SQLite는 Python에서 기본으로 제공되기 때문에 별도로 설치할 필요가 없습니다. 
+모델이란 부가적인 메타데이터를 가진 데이터베이스의 구조(layout)
 ```python
 #추가로 아주 간단한 모델. .? 만들기
 #모델의 활성화
@@ -288,16 +290,14 @@ from django.db import models
 # Create your models here.
 
 class HelloWorld(models.Model):
-    text = models.CharField(max_length=255, null=False)
+    text = models.CharField(max_length=255, null=False)     # CharField 는 문자(character) 필드를 표현
 
 #아주 간단한 모델
 #terminal에 
 python manage.py makemigrations 0001_iniatial
-python manage.py migrate
-#를 해주면
+python manage.py migrate        #migrate명령을 통해 변경사항을 데이터베이스에 적용
 #migration package안에 0001_iniatial.py가 생성된다.
-
-#당신을 위해 migration들을 실행시켜주고, 자동으로 데이터베이스 스키마를 관리해주는 migrate 명령어가 있습니다
+#makemigrations를 실행시킴으로써, 당신을 위해 migration들을 실행시켜주고, 자동으로 데이터베이스 스키마를 관리해주는 migrate 명령어가 있습니다
 ```
 migrate 명령은 아직 적용되지 않은 마이그레이션을 모두 수집해 이를 실행하며(Django는 django_migrations 테이블을 두어 마이그레이션 적용 여부를 추적합니다)  
 이 과정을 통해 모델에서의 변경 사항들과 데이터베이스의 스키마의 동기화가 이루어집니다.
@@ -386,7 +386,7 @@ def hello_world(request):
 <h3>{{ hello_world_output.text }}</h3>
 {% endif %}
 
-#### if, endif를 사용하여 hello_world_output값이 있으면 출력해준다.
+#### if, endif를 사용하여 hello_world_output 값이 있으면 출력해준다.
 
 #### database에 들어가서 sqlite driver를 다운로드 하면 데이터베이스를 볼 수 있다.
 
@@ -809,5 +809,4 @@ templates/head.html
             url("{% static 'fonts/NanumSquareL.otf' %}") format("opentype");
         }
     </style>
-
 ```
