@@ -182,6 +182,8 @@ block content안에 있는 내용을 자유롭게 고치면
 def hello_world(request):
     return render(request, 'accountapp:hello_world')
 ```
+> render() 함수는 request 객체를 첫번째 인수로 받고, 템플릿 이름을 두번째 인수로 받으며, context 사전형 객체를 세전째 선택적(optional) 인수로 받습니다.   
+> 인수로 지정된 context로 표현된 템플릿의 HttpResponse 객체가 반환됩니다.
 
 #### style, 구글 폰트를 통해 Header, Footer 꾸미기
 gsweb/templates폴더에 footer, head, header.html을 만들어준다.  
