@@ -967,11 +967,10 @@ df.head()
 ## K-Nearest Neighbors (K-NN)
 k-최근접 이웃 알고리즘
 
-- 새로운 데이터 포인트와 가장 가까운 훈련 데이터셋의 데이터  포인트를 찾아 예측
+- 새로운 데이터 포인트와 가장 가까운 훈련 데이터셋의 데이터 포인트를 찾아 예측
 - k 값에 따라 가까운 이웃의 수가 결정
 - 분류와 회귀에 모두 사용 가능  
-- 입력 값과 k개의 가까운 점이 있다고 가정할 때 그 점들이 어떤 라벨과 가장 비슷한지 (최 근접 이웃)
-판단하는 알고리즘
+- 입력 값과 k개의 가까운 점이 있다고 가정할 때 그 점들이 어떤 라벨과 가장 비슷한지(최근접 이웃) 판단하는 알고리즘
 
 - 매개 변수 : 데이터 포인트 사이의 거리를 재는 방법 (일반적으로 유클리디안 거리 사용), 이웃의 수
  - 장점 : 이해하기 쉬운 모델, 약간의 조정으로 좋은 성능
@@ -996,7 +995,7 @@ mglearn.plots.plot_knn_classification(n_neighbors=3)
 
  <img src="https://wikidocs.net/images/page/24654/2%EC%B0%A8%EC%9B%90_%ED%8F%89%EB%A9%B4.png" alt="유클리디안 거리" width="60%" />
 
-</center>
+  
 KNeighborsClassifier()
 ```
 KNeighborsClassifier(n_neighbors, weights, algorithm, leaf_size, p, metric, metric_params, n_jobs)

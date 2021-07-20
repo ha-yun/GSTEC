@@ -115,3 +115,101 @@ accountapp/templates/accountapp/detail.html
 
 <hr>
 
+## <2>
+#### mypage의 update info에서 아이디와 비밀번호 모두 수정할 수 있기 때문에 아이디는 수정하지 못하도록 해주기
+UserCreationForm에서 아이디입력은 비활성화
+accountapp디렉토리에 forms.py파일을 하나 생성
+```python
+# accountapp\forms.py
+class AccountCreationForm(UserCreationForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        
+        self.fields['username'].disabled = True
+        
+```
+```python
+# gsweb\accountapp\views.py
+class AccountUpdateView(UpdateView):
+    model = User
+    form_class = AccountCreationForm
+    context_object_name = 'target_user'
+    success_url = reverse_lazy('accountapp:hello_world')
+    template_name = 'accountapp/update.html'
+```
+def hello_world  #request를 보내고 출력하는 함수에서, request에 허락된 사람만 볼 수 있도록 해주기
+```python
+# gsweb\accountapp\templates\accountapp\hello_world.html
+def hello_world(request):
+    if request.user.is_authenticated:         ### is_authenticated
+        if request.method == "POST":
+
+            temp = request.POST.get('hello_world_input')
+
+            new_hello_world = HelloWorld()
+            new_hello_world.text = temp
+            new_hello_world.save()
+
+            return HttpResponseRedirect(reverse('accountapp:hello_world'))
+
+        else:
+            hello_world_list = HelloWorld.objects.all()
+            return render(request, 'accountapp/hello_world.html', context={'hello_world_list': hello_world_list})
+    else:
+        return HttpResponseRedirect(reverse('accountapp:login'))
+```
+AccountUpdateView와 AccountDeleteView도 해당 유저아니면 들어갈 수 없도록 설정해준다.
+```python
+# gsweb\accountapp\views.py
+class AccountUpdateView(UpdateView):
+    model = User
+    form_class = AccountCreationForm
+    context_object_name = 'target_user'
+    template_name = 'accountapp/update.html'
+
+    def get(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return super().get(request, *args, **kwargs)
+        else:
+            return HttpResponseRedirect(reverse('accountapp:login'))
+
+    def post(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return super().get(request, *args, **kwargs)
+        else:
+            return HttpResponseRedirect(reverse('accountapp:login'))
+
+class AccountDeleteView(DeleteView):
+    model = User
+    context_object_name = 'target_user'
+    success_url = reverse_lazy('accountapp:ha_world')
+    template_name = 'accountapp/delete.html'
+
+    def get(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return super().get(request, *args, **kwargs)
+        else:
+            return HttpResponseRedirect(reverse('accountapp:login'))
+
+    def post(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return super().post(request, *args, **kwargs)
+        else:
+            return HttpResponseRedirect(reverse('accountapp:login'))
+```
+if request.user.is_authenticated만 설정해주면 a유저가 b유저의 update, delete창에 들어갈 수 있기 때문에 대상 유저만 들어갈 수 있도록 조건을 추가해준다.
+```python
+    def get(self, request, *args, **kwargs) :
+        if request.user.is_authenticated and self.get_object() == request.user:
+            return super().get(request, *args, **kwargs)
+        else:
+            return HttpResponseForbidden()
+
+    def post(self, request, *args, **kwargs):
+        if request.user.is_authenticated and self.get_object() == request.user:
+            return super().get(request, *args, **kwargs)
+        else:
+            return HttpResponseForbidden()
+```
+
+

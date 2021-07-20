@@ -88,3 +88,115 @@ for _ in range(N):
     my_deque = run_cmd_with_queue(my_deque, command)
     my_deque
 ```
+
+<hr>
+
+## <2>
+```python
+# collections deque로 풀이
+from collections import deque
+
+class StackAndQueue:
+    def __init__(self, data_type="stack"):
+        self.array = deque()
+        self.data_type = data_type
+
+    def push(self, num):
+        self.array.append(num)
+
+    def pop(self):
+        if self.is_empty():
+            return -1
+
+        if self.is_stack():
+            return self.array.pop()
+        
+        return self.array.popleft()
+
+    def size(self):
+        return len(self.array)
+
+    def empty(self):
+        return int(self.is_empty())
+
+    def top(self):
+        if not self.is_stack() or self.is_empty():
+            return -1
+
+        return self.array[-1]
+
+    def front(self):
+        if self.is_stack() or self.is_empty():
+            return -1
+
+        return self.array[0]
+
+    def back(self):
+        if self.is_stack() or self.is_empty():
+            return -1
+
+        return self.array[-1]
+        # return self.get_last_val()
+
+    # def get_last_val(self):
+    #     return self.array[-1]
+
+    def is_empty(self):
+        return self.size() == 0
+
+    def is_stack(self):
+        return self.data_type == "stack"
+
+def run_cmd_with_deque(command, data_obj):
+    cmd_type = command[0]
+
+    if cmd_type == "push":
+        _, num = command
+        data_obj.push(num)
+    
+    elif cmd_type == "pop":
+        print(data_obj.pop())
+
+    elif cmd_type == "empty":
+        print(data_obj.empty())
+    
+    elif cmd_type == "size":
+        print(data_obj.size())
+    
+    elif cmd_type == "top":
+        print(data_obj.top())
+    
+    elif cmd_type == "front":
+        print(data_obj.front())
+    
+    elif cmd_type == "back":
+        print(data_obj.back())
+
+data_type = input()
+n = int(input())
+data_obj = StackAndQueue(data_type)
+
+for _ in range(n):
+    run_cmd_with_deque(input().split(), data_obj) # ["push", "3"], ["size"]
+```
+
+### 정렬(Sort)
+* 각각의 모든 요소를 이미 정렬된 앞의 배열 부분과 비교하여 적절한 위치로 옮겨 삽입한다.
+### 선택정렬 (selection sort)
+* 주어진 리스트 범위 내에서 (0부터 끝까지) 최솟값을 찾는다.
+* 처음 위치에 최솟값을 넣는다(교환).
+* 다음 인덱스(1부터 끝까지) 범위 내에서 최솟값을 찾는다.
+* 처음 위치에 최솟값을 넣는다 (반복)
+#### 버블정렬..
+* 인접한 두 값을 비교하여 정렬하는 방법
+* 비교적 구현이 쉬움.
+* 처음부터 끝까지 두 값 중 더 큰값을 오른쪽으로 바꾸면서 나아감.
+* 매일 오른쪽에 제일 큰 값이 간다.
+
+#### 위의 정렬들 다 대부분 O(N^2)만큼 걸린다.
+
+<hr>
+
+
+
+
