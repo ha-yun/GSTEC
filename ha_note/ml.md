@@ -545,15 +545,13 @@ BeautifulSoup( markup, parser )
 
 |메소드|설명|
 |---|---|
-|find(tag), find(tag, id=값), find(tag, class=값), 
-find(tag, attr{속성:속성값})|원하는 태그를 하나만 반환|
-|find_all(),
- find_all(tag, limit=숫자)|원하는 태그를 리스트 형태로 반환|
+|find(tag), find(tag, id=값), find(tag, class=값),find(tag, attr{속성:속성값})|원하는 태그를 하나만 반환|
+|find_all(),find_all(tag, limit=숫자)|원하는 태그를 리스트 형태로 반환|
 |select(CSS Selector)|CSS Selector를 활용하여 원하는 태그를 리스트 형태로 반환|
 |extract()|태그를 지우는 기능|
 
 
-##### !pip3 install beautifulsoup4 -> beautifulsoup설치하는 방법
+##### !pip3 install beautifulsoup4 -> beautifulsoup 설치하는 방법
 ```python
 from bs4 import BeautifulSoup
 html="""html,body,h,p tag""
@@ -622,16 +620,16 @@ print(wf)
 - h1 과 li 태그를 추출하는 코드
 ```python
   html='''
-html,body
-  div id='books'
-    h1 위키북스 도서 /h1
-    ul class='item'
-      li 게임 입문 /li
-      li 파이썬 입문 /li
-      li 웹 디자인 입문 /li
-    ul
-  div
-'''
+    html,body
+        div id='books'
+        h1 위키북스 도서 /h1
+        ul class='item'
+        li 게임 입문 /li
+        li 파이썬 입문 /li
+        li 웹 디자인 입문 /li
+        /ul
+        /div
+    '''
 soup = BeautifulSoup(html, 'html.parser')
 h1 = soup.select_one('div#books > h1')            #id는 샵으로 표시
 li_list = soup.select('div#books > ul.item > li')

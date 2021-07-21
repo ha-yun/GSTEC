@@ -585,7 +585,7 @@ templates/header.html
         <span>nav2</span>
 
         <span>
-            <a href="{% url 'accountapp:loogin' %}">
+            <a href="{% url 'accountapp:login' %}">
                 Login
             </a>
         </span>

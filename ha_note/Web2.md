@@ -211,5 +211,26 @@ if request.user.is_authenticated만 설정해주면 a유저가 b유저의 update
         else:
             return HttpResponseForbidden()
 ```
+#### Decorator 함수
+시스템이 커질수록 관리하기 편하고, 가독성이 좋아진다.
+```python
+def decorator(func):
+    def decorated():
+        print('Start WORLD')
+        func()
+        print('The END.')
+    return decorated
+
+@decorator
+def hello_world():
+    print('Start World')
+    print('Hello World!!')
+    print('The End.')
+
+hello_world()
+```
 
 
+<hr>
+
+## <3>
