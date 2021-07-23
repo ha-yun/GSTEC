@@ -291,7 +291,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn import metrics # 평가를 위한 모듈
-df = pd.read_csv(drive_path + 'bmi_500.csv', index_col='Label')
+df = pd.read_csv(drive_path + 'bmi_500.csv', index_col='Label')     #drive_path는 코랩에서 구글 드라이브 연동해서 적음 경로
 df.head()
 df.info()
 df.index.unique()
@@ -1573,10 +1573,10 @@ plt.show()
  또는 최소제곱법(Ordinary Least Squares)
  - 종속변수(응답변수) y와 한 개 이상의 독립변수(입력변수) x와의 상관관계를 모델링한 것
 
- >  \\( y=Wx+b \\)  
+ >  y = W*x + b  
   - (W : 가중치, b : 편향(bias))
 
- > \\( H(x)=Wx+b \\)  
+ > H(x) = W*x + b)  
   - H(x) : Linear 하게 Hypothesis(가설)을 세운다는 것
   - 데이터를 가장 잘 대변할 수 있는 H(x)의 W와 b를 정하는 것이 Linear Regression의 목적
 
@@ -1595,10 +1595,10 @@ mglearn.plots.plot_linear_regression_wave()
   - Cost = H(x) - y에 데이터를 대입하여 Cost의 총합을 구하는 것이 가능
   - Cost의 총합이 작은 Hypothesis일수록 데이터를 잘 대변하는 훌륭한 Linear Regression
   - Cost는 양수일 수도, 음수일 수도 있기에 이러한 문제를 방지하고자 총합을 구할 때 Cost값을 제곱하여 평균을 내는 방식(평균제곱오차, MSE, Mean Squared Error)을 사용
-  >  \\( cost(W,b)=\cfrac { 1 }{ m } \sum _{ i=1 }^{ m } { (H({ x }^{ (i) })-{ y }^{ (i) }) }^{ 2 }  \\)
+  >  cost(W,b)={ 1 / m } sum { i=1 }^{ m }(H(x ^ (i))- y^(i))^ 2)
 
-   > \\( H(x)=Wx+b \\)  
-
+   > H(x) = W*x + b 
+ 
  - 머신러닝(or 딥러닝)에서 learning의 목적은 Cost를 정의하고 이를 최소화하는 것
 #### 평균제곱오차 (MSE, Mean Squared Error) - 잘못그은 선 바로잡기
 
@@ -1613,9 +1613,9 @@ mglearn.plots.plot_linear_regression_wave()
 |2|2|
 |3|3|
 
-\\( H(x)=1 \times  x+0 \\)  
+H(x)=1 * x +0
 
-\\( H(x)=0.5 \times x+0 \\)
+H(x)=0.5 * x+0
 
 ```python
 import numpy as np
@@ -1641,8 +1641,8 @@ plt.show()
 ```
 
 #### 평균제곱오차 (MSE, Mean Squared Error) 연습 01
-가설의 MSE 값을 계산해보자.
-\\( \cfrac { { (H({ x }^{ (1) })-{ y }^{ (1) }) }^{ 2 } + { (H({ x }^{ (2) })-{ y }^{ (2) }) }^{ 2 }+ { (H({ x }^{ (3) })-{ y }^{ (3) }) }^{ 2 }+ { (H({ x }^{ (4) })-{ y }^{ (4) }) }^{ 2 } }{ 4 } = ? \\)
+가설의 MSE 값을 계산해보자.  
+(H({ x }^{ (1) })-{ y }^{ (1) }) }^{ 2 } + { (H({ x }^{ (2) })-{ y }^{ (2) }) }^{ 2 }+ { (H({ x }^{ (3) })-{ y }^{ (3) }) }^{ 2 }+ { (H({ x }^{ (4) })-{ y }^{ (4) }) }^{ 2 } }{ 4 } = ?
 
 ```python
 # y_pred(예측값), y(실제값)
@@ -1661,8 +1661,9 @@ MSE(y_pred2, y)     #0.875
 
 - 점진적인 하강, 점진적으로 반복적인 계산을 통해 W 파라미터 값을 업데이트 하면서 오류 값이 최소가 되는 값을 구하는 방식
 
-- 함수의 기울기(경사)를 구하여 기울기가 낮은 쪽으로 
-계속 이동하여 값을 최적화 시키는 방법 <br> (오차 (기울기)가 가장 작은 방향으로 이동시키는 방법)
+- 함수의 기울기(경사)를 구하여 기울기가 낮은 쪽으로 
+계속 이동하여 값을 최적화 시키는 방법 <br> 
+  (오차 (기울기)가 가장 작은 방향으로 이동시키는 방법)
   
 learning_rate(학습 속도)란?
 
@@ -1774,14 +1775,14 @@ t
 
 예측값과 실제 값의 cost를 최소화할 수 있도록 W(가중치, 회귀계수)를 최적화하며, 규제(Regularization)를 적용하지 않은 모델
 단순 선형회귀 (Simple Linear Regression)
-> \\( H({ x })={ W }{ x }+b \\)
+> H(x)= W * x +b
 
 다변수 선형회귀 (Multi-variable Linear Regreesion)
 > 변수가 3개 일때의 H(x) <br>
-> \\( H({ x }_{ 1 },{ x }_{ 2 },{ x }_{ 3 })={ W }_{ 1 }{ x }_{ 1 }+{ W }_{ 2 }{ x }_{ 2 }+{ W }_{ 3 }{ x }_{ 3 }+b \\)
+> H(x1,x2,x3) = W1*x1 + W2*x2 + W3 * x3 +b
 
 > 변수가 n개 일때의 H(x) <br>
->  \\( H({ x }_{ 1 },{ x }_{ 2 },{ x }_{ 3 },\dots ,{ x }_{ n })={ W }_{ 1 }{ x }_{ 1 }+{ W }_{ 2 }{ x }_{ 2 }+{ W }_{ 3 }{ x }_{ 3 }+\dots +{ W }_{ n }{ x }_{ n }+b \\)
+> H(x1,x2,x3,... ,xn) = W1*x1 + W2*x2 + W3*x3 +... + Wn*xn + b
 
 다항 회귀 (Polynomial Regreesion)
 > 회귀가 독립변수의 단항식이 아닌 2차, 3차 방정식과 같은 다항식으로 표현되는 것 <br>
