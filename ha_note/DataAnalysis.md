@@ -174,7 +174,7 @@ DROP TABLE myTB;  --테이블 삭제
 SELECT*FROM customer; --'customer'테이블 출력
 CREATE TABLE customer2 AS SELECT id,name,zip from customer; --'customer'바탕으로 'customer2'생성
 
-#테이블 생성시 컬럼의 자료형을 명시할 수 있다. CHAR,VARCHAR = TEXT형
+--테이블 생성시 컬럼의 자료형을 명시할 수 있다. CHAR,VARCHAR = TEXT형
 -- CHAR(n) = 길이 고정적, VARCHAR(n) = 최대 길이가 n까지
 CREATE TABLE test(
     id INTEGER,

@@ -198,7 +198,49 @@ for _ in range(n):
 <hr>
 
 ## <3>
+```python
+def insertion_sort(n_list):
+  i=0
+  while i != len(n_list)-1:
+    if n_list[i] != min(n_list[i:]):
+      n_list.append(n_list[i])
+      n_list.pop(i)
+    else:
+      i+=1
+  return n_list
 
+def selection_sort(n_list):  
+  m_list=[]
+  while len(n_list)>0:
+    mm=min(n_list)
+    m_list.append(mm)
+    n_list.remove(mm)
+  return m_list
+
+def bubble_sort(n_list):
+  for i in range(len(n_list)-1):
+    if n_list[i] > n_list[i+1]:
+      n_list[i+1],n_list[i]=n_list[i],n_list[i+1]
+  return n_list
+
+#-------------------------------------------------
+
+n = int(input())
+num_list = []
+
+for _ in range(n):
+    num = int(input())
+    num_list.append(num)
+
+insertion_sorted_list = insertion_sort(num_list)
+print(" ".join(map(str, insertion_sorted_list)))
+
+selection_sorted_list = selection_sort(num_list)
+print(" ".join(map(str, selection_sorted_list)))
+
+bubble_sorted_list = bubble_sort(num_list)
+print(" ".join(map(str, bubble_sorted_list)))
+```
 
 
 

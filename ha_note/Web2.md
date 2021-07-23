@@ -230,7 +230,64 @@ def hello_world():
 hello_world()
 ```
 
-
 <hr>
 
 ## <3>
+* django에서 로그인 데코레이터를 이미 제공  
+* @login_required  
+    - 기본적으로 accounts / login으로 넘어간다.  
+* @login_required(login_url=reverse_lazy('accountapp:login'))  
+    - 추가적인 인자를 넣을 수 있다.
+* login_required는 함수에만 적용가능, 클래스안의 메소드에는 적용되지 않는다.  
+    - 메소드를 변환해주어야 하는데 장고에서 모두 지원해줌.  
+> @method_decorator  메소드로 데코레이터를 바꿔준다.
+ @method_decorator(login_required)추가적인 인자를 넣어줌  
+ @method_decorator(login_required, 'get') get메소드에 적용
+ 
+```python
+# gsweb\accountapp\decorators.py 파일 생성
+from django.contrib.auth.models import User
+from django.http import HttpResponseForbidden
+
+
+def account_ownership_required(func):
+    def decorated(request, *args, **kwargs):
+        target_user = User.objects.get(pk=kwargs['pk'])
+        if target_user == request.user:
+            return func(request, *args, **kwargs)
+        else:
+            return HttpResponseForbidden()
+    return decorated
+```
+```python
+# gsweb\accountapp\views.py
+has_ownership = [login_required, account_ownership_required]    #로그인이 되었는지, target_user와 유저가 같은 사람인지 확인, decorator함수 이요
+
+@method_decorator(has_ownership, 'get')
+@method_decorator(has_ownership, 'post')
+class AccountUpdateView(UpdateView):
+    model = User
+    form_class = AccountCreationForm
+    context_object_name = 'target_user'
+    success_url = reverse_lazy('accountapp:hello_world')
+    template_name = 'accountapp/update.html'
+
+@method_decorator(has_ownership, 'get')
+@method_decorator(has_ownership, 'post')
+class AccountDeleteView(DeleteView):
+    model = User
+    context_object_name = 'target_user'
+    success_url = reverse_lazy('accountapp:hello_world')
+    template_name = 'accountapp/delete.html'
+
+```
+> terminal 창  
+python manage.py createsuperuser  
+hyeon  
+hyeon@admin.com  
+비밀번호입력하고 http://127.0.0.1:8000/admin/로 접속하면 관리창이 뜬다. 
+
+<hr>
+
+# 6주차
+## <1>
