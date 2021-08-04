@@ -180,7 +180,7 @@ block content안에 있는 내용을 자유롭게 고치면
 ```python
 #accountapp/views.py
 def hello_world(request):
-    return render(request, 'accountapp:hello_world')
+    return render(request, 'accountapp/hello_world.html')
 ```
 > render() 함수는 request 객체를 첫번째 인수로 받고, 템플릿 이름을 두번째 인수로 받으며, context 사전형 객체를 세전째 선택적(optional) 인수로 받습니다.   
 > 인수로 지정된 context로 표현된 템플릿의 HttpResponse 객체가 반환됩니다.
@@ -349,9 +349,6 @@ def hello_world(request):
         <input class="btn btn-primary rounded-pill px-2 py-2" type="submit">     <!--px : x축 padding늘려주고, py : y축 padding늘려줌 5까지 지원-->
                                                                                  <!--bootstrap의 button에서 class를 가져온다, rounded-pill은 버튼을 round한 모양으로 바꿔줌-->
     </form>
-
-
-<input type="text" name="hello_world_input">
 ```
 ```python
 #views.py에 
@@ -382,6 +379,7 @@ def hello_world(request):
     else:
         return render(request, 'accountapp/hello_world.html', context={'text':'GET METHOD!'})
 ```
+render의 context는 dict형 자료형으로 key값은 템플릿에서 사용할 변수이름, value값은 파이썬 변수가 된다.
 
 #### hello_world.html
 {% if hello_world_output %}     
@@ -389,7 +387,6 @@ def hello_world(request):
 {% endif %}
 
 #### if, endif를 사용하여 hello_world_output 값이 있으면 출력해준다.
-
 #### database에 들어가서 sqlite driver를 다운로드 하면 데이터베이스를 볼 수 있다.
 
 <hr>

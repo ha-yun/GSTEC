@@ -242,5 +242,9 @@ bubble_sorted_list = bubble_sort(num_list)
 print(" ".join(map(str, bubble_sorted_list)))
 ```
 
+<hr>
+
+# 6주차
+## <1>
 
 
