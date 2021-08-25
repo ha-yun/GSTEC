@@ -998,3 +998,502 @@ urlpatterns = [
 <hr>
 
 ## <3>
+로그인이 되어 있찌 않아도 article/detail페이지에 들어갈 수 있기 때문에 decorator을 다시 사용하여 막아준다.  
+create에서 바로 detail창으로 들어가도록 설정  
+decorator를 사용
+```python
+# gsweb\articleapp\views.py
+@method_decorator(login_required, 'get')
+@method_decorator(login_required, 'post')
+class ArticleCreateView(CreateView):
+    model = Article
+    form_class = ArticleCreationForm
+    template_name = 'articleapp/create.html'
+    def form_valid(self, form):
+        form.instance.writer = self.request.user
+        return super().form_valid(form)
+    def get_success_url(self):
+        return reverse('articleapp:detail',kwargs={'pk':self.object.pk})
+
+# gsweb\articleapp\decorators.py
+from django.http import HttpResponseForbidden
+
+from articleapp.models import Article
+
+
+def article_ownership_required(func):
+    def decorated(request, *args, **kwargs):
+        target_article = Article.objects.get(pk=kwargs['pk'])
+        if target_article.writer == request.user:
+            return func(request, *args, **kwargs)
+        else:
+            return HttpResponseForbidden()
+    return decorated
+
+
+# gsweb\articleapp\views.py
+@method_decorator(article_ownership_required,'get')
+@method_decorator(article_ownership_required,'post')
+class ArticleUpdateView(UpdateView):
+    model = Article
+    form_class = ArticleCreationForm
+    context_object_name = 'target_article'
+    template_name = 'articleapp/update.html'
+
+    def get_success_url(self):
+        return reverse('articleapp:detail',kwargs={'pk':self.object.pk})
+
+@method_decorator(article_ownership_required,'get')
+@method_decorator(article_ownership_required,'post')
+class ArticleDeleteView(DeleteView):
+    model = Article
+    context_object_name = 'target_article'
+    success_url = reverse_lazy('articleapp:list')
+    template_name = 'articleapp/delete.html'
+```
+
+```html
+# gsweb\articleapp\templates\articleapp\detail.html
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <div class="container text-center">
+        <div class="my-5">
+
+            {#      제목, 글쓴이, 작성일    #}
+            <h1 class="NNS_B">{{ target_article.title }}</h1>
+            <h3>{{ target_article.writer.profile.nickname }}</h3>
+            <p>{{ target_article.created_at }}</p>
+        </div>
+        <hr>
+        <div class="my-5">
+            {#      게시글 대표이미지, 글 내용     #}
+            <img src="{{ target_article.image.url }}"
+                 class="article_image"
+                 alt="">
+            <div class="article_content">
+                {{ target_article.content }}
+            </div>
+            {% if target_article.writer == user %}
+            <div>
+                <a href="{% url 'articleapp:update' pk=target_article.pk %}"
+                class="btn btn-success rounded-pill px-5">
+                    Update
+                </a>
+                <a href="{% url 'articleapp:delete' pk=target_article.pk %}"
+                class="btn btn-danger rounded-pill px-5">
+                    Delete
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+
+
+
+{% endblock %}
+```
+
+```css
+# gsweb\static\base.css
+
+.article_image{
+    border-radius: 2rem;
+    width: 70%;
+    box-shadow: 0 0 .5rem grey;
+}
+.article_content{
+    font-size: 1.1rem;
+    text-align: left;
+    margin: 2rem;
+}
+```
+### page ination  
+generate page of objects  
+page 짜르기..  
+```python
+# gsweb\articleapp\views.py
+class ArticleListView(ListView):
+    model = Article
+    context_object_name = 'article_list'
+    template_name = 'articleapp/list.html'
+    paginate_by = 20
+
+# gsweb\articleapp\urls.py
+urlpatterns = [
+    path('list/', ArticleListView.as_view(), name='list'),
+    path('create/', ArticleCreateView.as_view(), name='create'),
+    path('detail/<int:pk>', ArticleDetailView.as_view(), name='detail'),
+    path('update/<int:pk>', ArticleUpdateView.as_view(), name='update'),
+    path('delete/<int:pk>', ArticleDeleteView.as_view(), name='delete'),
+]
+```
+
+```html
+# gsweb\articleapp\templates\articleapp\list.html
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+    <style>
+        .container div {
+          width: 280px;
+          background-color: lightseagreen;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          border-radius: 1rem;
+            flex-direction: column;
+        }
+    .container img{
+        width: 100%;
+        border-radius: 1rem;
+    }
+    </style>
+
+
+    <!DOCTYPE html>
+    <div class="container my-4">
+
+        {% for article in article_list %}
+            <div>
+                <a href="{% url 'articleapp:detail' pk=article.pk %}">
+                    <img src="{{ article.image.url }}"
+                         alt="">
+                </a>
+            <span>{{ article.title }}</span>
+            </div>
+        {% endfor %}
+
+    </div>
+
+    <script src="{% static 'js/magicgrid.js' %}"></script>
+    <div class="text-center my-5">
+        <a href="{% url 'articleapp:create' %}"
+        class="btn btn-dark rounded-pill material-icons">
+            brush
+        </a>
+        <a href="{% url 'articleapp:create' %}"
+        class="btn btn-outline-dark rounded-pill px-5">
+            Create Article
+        </a>
+    </div>
+{% endblock %}
+```
+
+<hr>
+
+# 8주차
+## <1>
+add pagination
+```html
+# articleapp/templates/articleapp/list.html
+   {% include 'snippets/pagination.html' %}
+
+# templates/snippets/pagination.html
+    <div class="text-center my-4">
+        {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number}}"
+            class="btn btn-secondary rounded-pill">
+                {{ page_obj.previous_page_number }}
+            </a>
+        {% endif %}
+        <a href="#"
+        class="btn btn-dark rounded-pill">
+            {{ page_obj.number }}
+        </a>
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}"
+            class="btn btn-secondary rounded-pill">
+                {{page_obj.next_page_number}}
+            </a>
+        {% endif %}
+    </div>
+```
+터미널에  
+python manage.py startapp commentapp
+```python
+# commentapp/urls.py 파일 생성
+urlpatterns = [
+] 
+
+# gsweb/urls.py
+    path('comments/',include('commentapp.urls')),
+
+
+# commentapp/models.py
+class Comment(models.Model):
+    article = models.ForeignKey(Article, on_delete=models.SET_NULL,
+                                related_name='comment', null=True)
+    writer = models.ForeignKey(User, on_delete=models.SET_NULL,
+                               related_name='comment', null=True)
+
+    content = models.TextField(null=False)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+# commentapp/forms.py 파일 생성
+class CommentCreationForm(ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['content'] 
+```
+터미널에  
+python manage.py makemigrations  
+python manage.py migrate
+
+###  add comment createview
+```python
+# commentapp/views.py
+class CommentCreateView(CreateView):
+    model = Comment
+    form_class = CommentCreationForm
+    template_name = 'commentapp/create.html'
+
+    def get_success_url(self):
+        return reverse('articleapp:detail', kwargs={'pk':self.object.article.pk}) 
+
+# commentapp/urls.py
+app_name = 'commentapp'
+
+urlpatterns = [
+    path('create/', CommentCreateView.as_view(), name='create'),
+] 
+```
+
+```html
+# commentapp/templates/commentapp/create.html
+{% load bootstrap4 %}
+    <div class="text-center mw-500 m-auto">
+        <div class="m-5">
+            <h4>Create Comment</h4>
+        </div>
+        <div>
+            <form action="{% url 'commentapp:create' %}" method="post">
+                {% csrf_token %}
+                {% bootstrap_form form %}
+                <div class="m-5">
+                    <input type="submit" class="btn btn-dark rounded-pill px-5">
+                </div>
+            </form>
+        </div>
+    </div>
+
+```
+
+```python
+# articleapp/views.py
+class ArticleDetailView(DetailView, FormMixin):
+    model = Article
+    form_class = CommentCreationForm
+    context_object_name = 'target_article'
+    template_name = 'articleapp/detail.html'
+```
+
+```html
+#  articleapp/templates/articleapp/detail.html
+        <hr>
+
+        <div class="text-center my-4">
+            {% include 'commentapp/create.html'%}
+        </div>
+  
+```
+
+<hr>
+
+## <2>
+ commentcreateview form_valid
+ ```python
+ # commentapp/views.py
+     def form_valid(self, form):
+        form.instance.writer = self.request.user
+        form.instance.article_id = self.request.POST.get('article_pk')
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse('articleapp:detail', kwargs={'pk':self.object.article.pk}) 
+
+```
+
+```html
+# commentapp/templates/commentapp/create.html
+                <input type="hidden"
+                    name="article_pk"
+                    value="{{ target_article.pk }}">
+```
+add CommentDeleteView
+```python
+# commentapp/views.py
+class CommentDeleteView(DeleteView):
+    model = Comment
+    context_object_name = 'target_comment'
+    template_name = 'commentapp/delete.html'
+
+    def get_success_url(self):
+        return reverse('articleapp:detail', kwargs={'pk':self.object.article.pk}
+                       
+# commentapp/urls.py
+    path('delete/<int:pk>', CommentDeleteView.as_view(), name='delete'),
+
+```
+
+```html
+# commentapp/templates/commentapp/delete.html
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+    <div class="text-center mw-500 m-auto">
+        <div class="m-5">
+            <h4>Delete Comment </h4>
+        </div>
+        <div>
+            <form action="{% url 'commentapp:delete' pk=target_comment.pk %}" method="post">
+                {% csrf_token %}
+                <div class="m-5">
+                    <input type="submit" class="btn btn-danger rounded-pill px-5">
+                </div>
+            </form>
+        </div>
+    </div>
+
+{% endblock %} 
+```
+
+comment-box
+```html
+# articleapp/templates/articleapp/detail.html
+            {% for comment in target_article.comment.all %}
+                <div class="comment-box">
+                    <div>
+                        <span class="NNS_B" style="font-size: 1.3rem">{{ comment.writer.profile.nickname }}</span>
+                        <span>{{ comment.created_at }}</span>
+                    </div>
+                    <div>
+                        <p>
+                            {{ comment.content }}
+                        </p>
+                    </div>
+                </div>
+
+            {% endfor %}
+```
+
+```css
+# static/base.css
+.comment-box{
+    text-align: left;
+    border: solid;
+    border-color: #3c3cd5;
+    border-radius: 1rem;
+    padding: 1rem;
+    margin: 1rem;
+}
+```
+
+comment decorators
+```python
+# commentapp/views.py
+@method_decorator(login_required,'get')
+@method_decorator(login_required,'post')
+
+@method_decorator(comment_ownership_required, 'get')
+@method_decorator(comment_ownership_required, 'post')
+
+# commentapp/decorators.py
+from django.http import HttpResponseForbidden
+
+from commentapp.models import Comment
+
+
+def comment_ownership_required(func):
+    def decorated(request, *args, **kwargs):
+        target_comment = Comment.objects.get(pk=kwargs['pk'])
+        if target_comment.writer == request.user:
+            return func(request,*args, **kwargs)
+        else:
+            return HttpResponseForbidden()
+    return decorated 
+```
+
+ comment delete button
+ ```html
+# articleapp/templates/articleapp/detail.html
+                    {% if comment.writer == user %}
+                    <div style="text-align: right">
+                        <a href="{% url 'commentapp:delete' pk=comment.pk %}"
+                        class="btn btn-danger rounded-pill px-5">
+                            Delete
+                        </a>
+                    </div>
+                    {% endif %}
+```
+
+<hr>
+
+## <3>
+ngrok 다운, ngrok.exe파일을 최상위 폴더로 옮겨준다.  
+terminal창에 ngrok http 8000
+```python
+# gsweb/settings.py
+ALLOWED_HOSTS = ["*"]
+```
+```html
+# gsweb\templates\head.html
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    # articleapp/templates/articleapp/list.html
+    <style>
+        .container{
+            padding: 0;
+            margin: 0 auto;
+        }
+        .container div {
+          width: 45%;
+          background-color: lightseagreen;
+          max-width: 250px;
+            box-shadow: 0 0 .5rem cadetblue;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          border-radius: 1rem;
+            flex-direction: column;
+        }
+```
+
+```js
+# static/js/magicgrid.js
+let magicGrid = new MagicGrid({
+  container: '.container',
+  animate: true,
+  gutter: 12,
+  static: true,
+  useMin: true
+});
+
+```
+```css
+# static/base.css
+@media screen and(max-width: 500px){
+    html{
+        /* default font-size = 16px */
+        font-size: 13px;
+    }
+}
+```
+terminal  
+python manage.py startapp projectapp  
+
+```python
+# gsweb/settings.py
+    'projectapp',
+
+# gsweb/urls.py
+    path('projects/', include('projectapp.urls')),
+```
+
+<hr>

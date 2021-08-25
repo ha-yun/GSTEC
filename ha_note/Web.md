@@ -525,7 +525,7 @@ accountapp/templates/accountapp/login.html
             <h4 class="m-5">Login</h4>
         </div>
         <div>
-            <form action="{% url 'accountapp:loogin' %}" method="post">
+            <form action="{% url 'accountapp:login' %}" method="post">
                 {% csrf_token %}
                 {{ form }}
                 <div class="m-5">
@@ -727,11 +727,12 @@ from accountapp.views import hello_world, AccountCreateView, AccountDetailView
 
 app_name ='accountapp'
 
-    path('logout/', LogoutView.as_view(), name='logout'),
-
+urlpatterns = [
+    path('home/', home, name='home'),
     path('create/', AccountCreateView.as_view(), name='create'),
-
-    path('detail/<int:pk>', AccountDetailView.as_view(), name='detail')
+    path('login/', LoginView.as_view(template_name='accountapp/login.html'), name='login'),
+    path('logout/', LogoutView.as_view(), name='logout'),
+    path('detail/<int:pk>', AccountDetailView.as_view(), name='detail'),
 ]
 
 ```
@@ -745,10 +746,6 @@ from django.views.generic import CreateView, DetailView
 
 from accountapp.models import HelloWorld
 
-class AccountCreateView(CreateView):
-    success_url = reverse_lazy('accountapp:hello_world')
-    template_name = 'accountapp/create.html'
-
 class AccountDetailView(DetailView):
     model = User
     context_object_name = 'target_user'
@@ -756,15 +753,12 @@ class AccountDetailView(DetailView):
 ```
 templates/header.html
 ```html
-        {% else %}
-        <span>
-            <a href="{% url 'accountapp:detail' pk=user.pk %}">
-                Mypage
-            </a>
-        </span>
-        <span>
-            <a href="{% url 'accountapp:logout' %}">
-                Logout
+    {% else %}
+    <span>
+        <a href="{% url 'accountapp:detail' %}">
+            Mypage
+        </a>
+    </span>
 ```
 accountapp/templates/accountapp/detail.html
 ```html
